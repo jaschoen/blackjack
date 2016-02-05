@@ -20,7 +20,7 @@ describe Game do
 	end
 
 	describe "#hit_player" do 
-		it "adds a playable card to the player hand" do
+		it "adds a card to the player hand" do
 			game.deal
 			game.hit_player 
 			expect(game.player_hand.cards.size).to eq(3)
@@ -28,7 +28,7 @@ describe Game do
 	end
 
 	describe "#hit_dealer" do 
-		it "adds a playable card to the dealer hand" do
+		it "adds a card to the dealer hand" do
 			game.deal
 			game.hit_dealer 
 			expect(game.dealer_hand.cards.size).to eq(3)
@@ -134,19 +134,33 @@ describe Console do
 																									 "eight of spades\n\n").to_stdout
 		end
 	end
-	describe "#you_lose" do
-		it "outputs 'Dealer wins this one, maybe you're better at slot machines." do 
-			expect {ui.you_lose}.to output("Dealer wins this one, maybe you're better at slot machines.\n").to_stdout
-		end
-	end
-	describe "#you_win" do
-		it "outputs 'You win! Well played." do 
-			expect {ui.you_lose}.to output("\n").to_stdout
-		end
-	end	
-	describe "#get_player_move" do
-		it "gets player move" do 
+	# describe "#you_lose" do
+	# 	it "outputs 'Dealer wins this one, maybe you're better at slot machines." do 
+	# 		expect {ui.you_lose}.to output("Dealer wins this one, maybe you're better at slot machines.\n").to_stdout
+	# 	end
+	# end
+	# describe "#you_win" do
+	# 	it "outputs 'You win! Well played." do 
+	# 		expect {ui.you_lose}.to output("\n").to_stdout
+	# 	end
+	# end	
+	# describe "#get_player_move" do
+	# 	it "gets player move" do 
 
+	# 	end
+	# end
+	describe "#output_point_total(hand)" do
+		it "outputs ' total is 11' when hand is 8 and 3" do 
+			hand = Player_hand.new
+			hand.cards << Card.new(:hearts, :three, 3)
+			hand.cards << Card.new(:spades, :eight, 8)
+			expect {ui.output_point_total(hand)}.to output("====================\n" + 
+				                                             "point total is 11\n\n").to_stdout
 		end
 	end
+	describe "#player_stays" do
+		it "outputs player stays" do 
+			expect {ui.player_stays}.to output("Player stays\n").to_stdout
+		end
+	end		
 end

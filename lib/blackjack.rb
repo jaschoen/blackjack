@@ -36,11 +36,15 @@ class Dealer_hand
     end
     count
   end
+
+  def ace_check
+  end
 end
 # ================================================
 class Console
   def welcome
     puts "Welcome to Blackjack, good luck!"
+    sleep 1
   end
 
   def prompt_for_action
@@ -52,12 +56,18 @@ class Console
     puts hand.cards[0].name.to_s + " of " + hand.cards[0].suite.to_s 
     puts ""
   end
+  def dealer_reveals
+    puts "Dealer flips to reveal: "
+  end
   def player_showing(hand)
     puts "Player cards are:"
+    output_cards(hand)
+    puts ""
+  end
+  def output_cards(hand) 
     hand.cards.each do |card|
       puts card.name.to_s + " of " + card.suite.to_s 
     end
-    puts ""
   end
   def you_lose
     puts "Dealer wins this one, maybe you're better at slot machines."
@@ -67,6 +77,36 @@ class Console
     puts "You win! Well played."
     exit
   end
+  def output_point_total(hand)
+    puts "===================="
+    puts "point total is #{hand.count}\n\n"
+  end
+  def player_stays
+    puts "Player stays"
+  end
+  def player_blackjack
+    puts "Blackjack, you win!"
+    exit
+  end
+  def player_bust
+    puts "Bust, you lose.  Womp womp."
+    exit
+  end
+  def dealer_hits
+    puts "Dealer hits"
+  end
+  def dealer_busts
+    puts "Dealer busts, you win!"
+    exit
+  end
+  def final_totals(player_hand, dealer_hand)
+    puts "================================================================"
+    puts "Player has #{player_hand.count}, Dealer has #{dealer_hand.count}"
+    you_win  if player_hand.count >  dealer_hand.count
+    you_lose if player_hand.count <= dealer_hand.count
+    exit
+  end
+
 end
 # ================================================
 class Deck
@@ -112,21 +152,43 @@ class Game
   
 
   def start_game
+    # Game setup
     deal
     ui.welcome
     ui.dealer_showing(dealer_hand)
     ui.player_showing(player_hand)
+    ui.output_point_total(player_hand)
 
     ui.prompt_for_action
-    
     action = gets.chomp.to_i
+    # Player round
     while action != 2
       hit_player
       ui.player_showing(player_hand)
-      ui.you_lose if bust?(player_hand)
+      ui.output_point_total(player_hand)
+
+      ui.player_bust if bust?(player_hand)
+      ui.player_blackjack if blackjack?(player_hand)
+
       action = gets.chomp.to_i 
     end
-
+    ui.player_stays
+    ui.output_point_total(player_hand)
+    # Dealer round starts
+    ui.dealer_reveals
+    ui.output_cards(dealer_hand)
+    ui.output_point_total(dealer_hand)
+    # Dealer playing
+    while dealer_hand.count < 17
+      ui.dealer_hits
+      hit_dealer
+      sleep 1
+      ui.output_cards(dealer_hand)
+      ui.output_point_total(dealer_hand)
+      ui.dealer_busts if bust?(dealer_hand)
+    end
+    # Once both players have stayed, output winner
+    ui.final_totals(player_hand, dealer_hand)
 
   end
 
@@ -164,7 +226,6 @@ class Game
   end
 
 end
-# Game.new.start_game
 
 
 
